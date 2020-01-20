@@ -126,6 +126,8 @@ setup(
         "termcolor>=1.1",
         "Pillow==6.2.2",  # torchvision currently does not work with Pillow 7
         "yacs>=0.1.6",
+        "torch==1.4.0",
+        "torchvision=0.5.0",
         "tabulate",
         "cloudpickle",
         "matplotlib",
