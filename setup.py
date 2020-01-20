@@ -125,8 +125,6 @@ setup(
     install_requires=[
         "termcolor>=1.1",
         "Pillow==6.2.2",  # torchvision currently does not work with Pillow 7
-        "torchvision==0.4.2",
-        "torch==1.3.1",
         "yacs>=0.1.6",
         "tabulate",
         "cloudpickle",
