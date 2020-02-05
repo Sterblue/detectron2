@@ -291,18 +291,17 @@ def convert_to_coco_dict(dataset_name):
     dataset_dicts = DatasetCatalog.get(dataset_name)
     metadata = MetadataCatalog.get(dataset_name)
 
-    # unmap the category ids for COCO
+    # unmap the category mapping ids for COCO
     if hasattr(metadata, "thing_dataset_id_to_contiguous_id"):
         reverse_id_mapping = {v: k for k, v in metadata.thing_dataset_id_to_contiguous_id.items()}
-        for dataset_dict in dataset_dicts:
-            dataset_dict["category_id"] = reverse_id_mapping[dataset_dict["category_id"]]
-        categories = [
-            {"id": reverse_id_mapping[id], "name": name}
-            for id, name in enumerate(metadata.thing_classes)
-        ]
+        reverse_id_mapper = lambda contiguous_id: reverse_id_mapping[contiguous_id]
     else:
+        reverse_id_mapper = lambda contiguous_id: contiguous_id
 
-        categories = [{"id": id, "name": name} for id, name in enumerate(metadata.thing_classes)]
+    categories = [
+        {"id": reverse_id_mapper(id), "name": name}
+        for id, name in enumerate(metadata.thing_classes)
+    ]
 
     logger.info("Converting dataset dicts into COCO format")
     coco_images = []
@@ -360,8 +359,8 @@ def convert_to_coco_dict(dataset_name):
             coco_annotation["image_id"] = coco_image["id"]
             coco_annotation["bbox"] = [round(float(x), 3) for x in bbox]
             coco_annotation["area"] = area
-            coco_annotation["category_id"] = annotation["category_id"]
             coco_annotation["iscrowd"] = annotation.get("iscrowd", 0)
+            coco_annotation["category_id"] = reverse_id_mapper(annotation["category_id"])
 
             # Add optional fields
             if "keypoints" in annotation:
