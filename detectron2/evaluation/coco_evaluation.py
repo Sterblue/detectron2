@@ -12,6 +12,8 @@ from collections import OrderedDict
 import pycocotools.mask as mask_util
 import torch
 from fvcore.common.file_io import PathManager
+import matplotlib  # isort:skip
+matplotlib.use("agg")
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 from tabulate import tabulate
