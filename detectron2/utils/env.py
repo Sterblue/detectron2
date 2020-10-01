@@ -12,6 +12,12 @@ import torch
 __all__ = ["seed_all_rng"]
 
 
+TORCH_VERSION = tuple(int(x) for x in torch.__version__.split(".")[:2])
+"""
+PyTorch version as a tuple of 2 ints. Useful for comparison.
+"""
+
+
 def seed_all_rng(seed=None):
     """
     Set the random seed for the RNG in torch, numpy and python.
@@ -60,7 +66,10 @@ def _configure_libraries():
 
             if int(cv2.__version__.split(".")[0]) >= 3:
                 cv2.ocl.setUseOpenCL(False)
-        except ImportError:
+        except ModuleNotFoundError:
+            # Other types of ImportError, if happened, should not be ignored.
+            # Because a failed opencv import could mess up address space
+            # https://github.com/skvark/opencv-python/issues/381
             pass
 
     def get_version(module, digit=2):
